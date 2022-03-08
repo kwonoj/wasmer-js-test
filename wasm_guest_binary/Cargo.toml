@@ -1,0 +1,11 @@
+[package]
+name = "wasm_guest_binary"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+rkyv = "0.7.35"
+runner_base = { version="*", path = "../runner_base" }

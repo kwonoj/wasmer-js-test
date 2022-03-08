@@ -1,0 +1,15 @@
+[package]
+name = "host_runner"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = {version = "0.2.79", features = ["serde-serialize"]}
+runner_base = { version="*", path = "../runner_base" }
+rkyv = "0.7.35"
+wasmer = {version = "2.2.0", default-features = false, features = ["js-default", "wat", "wasm-types-polyfill"]}
+wasmer-wasi = {version = "2.2.0", default-features = false, features = ["js-default"]}
+parking_lot = "0.12.0"

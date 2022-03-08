@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "host_runner",
+  "wasm_guest_binary",
+  "runner_base"
+]
