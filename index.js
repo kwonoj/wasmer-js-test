@@ -1,5 +1,4 @@
-const {test} = require('./host_runner/pkg');
+const {test_success, test_fail} = require('./host_runner/pkg');
 
-const result = test();
-
-console.log(result);
+console.log(test_success());
+console.log(test_fail());

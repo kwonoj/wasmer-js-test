@@ -67,8 +67,39 @@ fn read_bytes_from_guest(result: &Arc<Mutex<Vec<u8>>>) -> SharedStruct {
     deserialized.deserialize(&mut rkyv::Infallible).unwrap()
 }
 
+fn load_plugin() -> Result<(Instance, Arc<Mutex<Vec<u8>>>), std::fmt::Error> {
+    let wasmer_store = Store::default();
+    let module = Module::new(&wasmer_store, &WASM_BINARY);
+
+    return match module {
+        Ok(module) => {
+            let transform_result: Arc<Mutex<Vec<u8>>> = Arc::new(Mutex::new(vec![]));
+
+            let set_transform_result_fn_decl = Function::new_native_with_env(
+                &wasmer_store,
+                HostEnvironment {
+                    memory: LazyInit::default(),
+                    transform_result: transform_result.clone(),
+                },
+                set_transform_result,
+            );
+
+            let imports = imports! {
+                "env" => {
+                    "__set_transform_result" => set_transform_result_fn_decl,
+                }
+            };
+
+            let instance = Instance::new(&module, &imports).unwrap();
+
+            Ok((instance, transform_result))
+        },
+        Err(err) => panic!("should not be here"),
+    }
+}
+
 #[wasm_bindgen]
-pub fn test() -> JsValue {
+pub fn test_success() -> JsValue {
     let input = SharedStruct {
         name: "input".to_string(),
         list: vec!["input1".to_string(), "input2".to_string()],
@@ -111,6 +142,32 @@ pub fn test() -> JsValue {
     let result = read_bytes_from_guest(&transform_result);
 
     JsValue::from_serde(&result).unwrap()
+}
 
-    //JsValue::from("b")
+
+#[wasm_bindgen]
+pub fn test_fail() -> JsValue {
+    let input = SharedStruct {
+        name: "input".to_string(),
+        list: vec!["input1".to_string(), "input2".to_string()],
+        other_list: vec![1, 2, 3, 4],
+    };
+
+    let input_serialized = rkyv::to_bytes::<_, 512>(&input).unwrap();
+
+    let (instance, transform_result) = load_plugin().unwrap();
+
+    let input_ptr = write_bytes_into_guest(&instance, &input_serialized);
+
+    let transform_fn = instance
+        .exports
+        .get_native_function::<(i32, i32), i32>("__guest_transform")
+        .unwrap();
+
+
+    transform_fn.call(input_ptr.0, input_ptr.1).unwrap();
+
+    let result = read_bytes_from_guest(&transform_result);
+
+    JsValue::from_serde(&result).unwrap()
 }
