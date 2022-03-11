@@ -98,7 +98,9 @@ fn load_plugin() -> Result<(Instance, Arc<Mutex<Vec<u8>>>), std::fmt::Error> {
         Err(err) => panic!("should not be here"),
     }
 }
-
+pub fn main() {
+    
+}
 pub fn test_success() {
     let input = SharedStruct {
         name: "input".to_string(),

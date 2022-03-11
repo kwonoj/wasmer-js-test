@@ -48,13 +48,13 @@ fn write_bytes_into_guest(instance: &Instance, bytes: &AlignedVec) -> (i32, i32)
     let ptr_start = alloc.call(bytes_len.try_into().unwrap()).unwrap();
 
     let view = memory.uint8view();
-
-    view.subarray(
-        ptr_start.try_into().unwrap(),
-        ptr_start as u32 + bytes_len as u32,
-    )
-    .copy_from(bytes);
-
+    unsafe {
+        view.subarray(
+            ptr_start.try_into().unwrap(),
+            ptr_start as u32 + bytes_len as u32,
+        )
+        .copy_from(bytes);
+    }
     (ptr_start, bytes_len.try_into().unwrap())
 }
 
