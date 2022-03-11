@@ -1,3 +1,7 @@
+# [package]
+# name = "swc-workspace"
+# version = "0.1.0"
+
 [workspace]
 members = [
   "host_runner",
@@ -5,3 +9,11 @@ members = [
   "wasm_guest_binary",
   "runner_base"
 ]
+resolver = "2"
+
+# [dependencies]
+# host_runner = { version = "=0.1.0", path = "host_runner", default-features = false }
+# host_runner_native = { version = "=0.1.0", path = "host_runner", host_runner_native = false }
+
+# [features]
+# default = []

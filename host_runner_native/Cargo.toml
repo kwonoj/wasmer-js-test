@@ -8,7 +8,12 @@ edition = "2021"
 [dependencies]
 runner_base = { version="*", path = "../runner_base" }
 rkyv = "0.7.35"
-wasmer = {version = "2.2.0", features = ["sys-default"]}
-wasmer-wasi = {version = "2.2.0", features = ["sys-default"]}
-wasmer-cache = "2.2.0"
 parking_lot = "0.12.0"
+wasmer = {version = "2.2.0", default-features = false }
+wasmer-wasi = {version = "2.2.0", default-features = false }
+
+[features]
+base = ["wasmer/sys-default", "wasmer-wasi/sys-default", "wasmer-wasi/host-fs"]
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+wasmer-cache = "2.2.0"
