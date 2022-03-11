@@ -1,0 +1,14 @@
+[package]
+name = "host_runner_native"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+runner_base = { version="*", path = "../runner_base" }
+rkyv = "0.7.35"
+wasmer = {version = "2.2.0", features = ["sys-default"]}
+wasmer-wasi = {version = "2.2.0", features = ["sys-default"]}
+wasmer-cache = "2.2.0"
+parking_lot = "0.12.0"
